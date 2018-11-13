@@ -1,0 +1,234 @@
+ NEXUS
+http://nexus.ci.it.loc/#nexus-search;quick~ChameleonAPI_client
+
+ GIT
+https://git.privatbank.ua/drp/RenewalCardsExporter
+
+ Путеводитель
+https://my.privatbank.ua/
+
+ ПК Проминь
+https://confluence.privatbank.ua/pages/viewpage.action?pageId=34966869
+
+ ПК "Проминь" три версии:
+- тест (Poligon)
+- препродакшн (Stage)
+- боевой
+https://confluence.privatbank.ua/pages/viewpage.action?pageId=34966869#id-2.7.%D0%9F%D0%9A%D0%9F%D1%80%D0%BE%D0%BC%D0%B8%D0%BD%D1%8C-%D0%94%D0%B8%D1%81%D1%82%D1%80%D0%B8%D0%B1%D1%83%D1%82%D0%B8%D0%B2%D1%8B%D0%9F%D1%80%D0%BE%D0%BC%D0%B8%D0%BD%D1%8F
+
+
+-=-=-=-=-=-=-=- 
+GIT проекты в работу от Саши:
+!!! В Intelij IDEA полностью отрубать прокси при работе с гитом (или в исключения) !!!
+git@git.privatbank.ua:drp/RenewalCardsExporter.git 							  (Выгрузка по перевыпуску карт)
+git@git.privatbank.ua:drp/_-_-_multiservicegroup-standalone_-multiservice.git (Мультисервис)
+git@git.privatbank.ua:drp/ServicesDescriptor.git 							  (Документация)
+git@git.privatbank.ua:drp_pegasusmaven/pegasus.git 							  (Пегас - плагин)
+-=-=-=-=-=-=-=- 
+
+
+
+Настройки и логи
+1. Настройки
+maven
+edit /etc/maven/settings.xml
+tomcat
+sudo nano /opt/tomcat/conf/tomcat-users.xml
+
+2. Логи
+Tomcat: sudo tail -f /opt/tomcat/logs/*
+
+
+
+
+
+=-=-=-=-=-=-=-
+Задачи
+=-=-=-=-=-=-=-
+
+
+--------------
+05.11.18
+--------------
+
+1. Баг в MultiService. Closed Resultset: getObject
+-- POLIGON --
+10:20
+Для Firefox: view-source:https://10.56.0.175/service/getBranches/XML/GET
+Chrome: 	 https://10.56.0.175/service/getBranches/XML/GET
+
+-- PRODUCTION --
+getPDFInsurance
+http://10.61.144.100:9000/logs/service_getPDFInsurance_2018.11.05_00_00_00.000.log
+[2018.11.05 11:50:45.456] SEVERE Ошибка обработки входящего запроса 43 390 (serviceName: getPDFInsurance, requestMethod: post, contentType: xml, requestParameters: {}, clientIP: 10.1.246.16, X-Real-IP: 10.1.158.237): CallableStatementCallback; SQL [{call 
+
+getBranches
+http://10.61.144.100:9000/logs/service_getBranches_2018.11.05_00_00_00.000.log
+[2018.11.05 12:00:08.382] SEVERE Ошибка обработки входящего запроса 52 740 (serviceName: getBranches, requestMethod: GET, contentType: XML, requestParameters: {}, clientIP: 10.1.246.16, X-Real-IP: 10.61.146.230): CallableStatementCallback; uncategorized SQLException for SQL [{call EMB.BRANCHES.GETBRANCHES(?,?,?)}]; SQL state [99999]; error code [17009]; Закрытая команда; nested exception is java.sql.SQLException: Закрытая команда
+org.springframework.jdbc.UncategorizedSQLException: CallableStatementCallback; uncategorized SQLException for SQL [{call EMB.BRANCHES.GETBRANCHES(?,?,?)}]; SQL state [99999]; error code [17009]; Закрытая команда; nested exception is java.sql.SQLException: Закрытая команда
+
+-- Возможное решение --
+http://qaru.site/questions/15860924/how-to-close-callablestatement-when-using-callablestatementcreator-and-callablestatementcallback
+
+
+
+
+2. Саша обучение Spring Hibernate
+	2.1. Проект в Idea
+		hibernate
+	2.2. Hibernate man:
+		http://www.dil.univ-mrs.fr/~massat/docs/hibernate-2/reference/ru/html/architecture.html
+	2.3 Все ссылки для изучения
+		- https://www.google.com.ua/search?source=hp&ei=YCvgW8DKNYulsAHOi5jYCw&q=hibernate+spring+boot+postgresql&oq=hibernate%2C+springboot+&gs_l=psy-ab.1.8.0i13k1l10.3608.40666.0.47205.25.20.1.3.3.0.200.2569.0j19j1.20.0....0...1c.1.64.psy-ab..1.24.2598.0..0j0i131k1j0i10k1j0i22i10i30k1.0.bT6RCJXHbg8
+		- https://springframework.guru/configuring-spring-boot-for-postgresql/
+		- https://www.callicoder.com/spring-boot-jpa-hibernate-postgresql-restful-crud-api-example/
+		- https://www.google.com/search?client=ubuntu&channel=fs&q=jpa+%D1%8D%D1%82%D0%BE&ie=utf-8&oe=utf-8
+
+--------------
+
+
+
+
+--------------
+01.11.18
+--------------
+1. Multiservice "разобраться"
+
+	1.1 XSLT - опробовать
+		Man
+		http://crypto.pp.ua/2010/06/rabota-s-xslt-v-java/
+		http://xmlhack.ru/books/xslt/ch_09_09.html
+
+		Этот язык для описания преобразований XML-документа применяется не только для приведения XML-документов к некоторому “читаемому” виду, но и для изменения структуры XML-документа.
+		Используется для:
+		· удаления существующих или добавления новых элементов в XML-документ;
+		· создания нового XML-документа на основании заданного;
+		· извлечения информации из XML-документа с разной степенью детализации;
+		· преобразования XML-документа в документ HTML или документ другого типа.
+
+	1.2 Найти в проекте код-обработчик вызова (От себя):
+		https://cards.test.it.loc/service/putLogEmbossGSM/json/post
+
+	1.3 JAXB - это библиотека (входящая в JDK) позволяющая преобразовывать (маршализовать) Java классы в XML и обратно (демаршализовать).
+		https://javarush.ru/quests/lectures/questcollections.level03.lecture07
+
+2. ORM - изучить, знать.
+
+3. HIBERNATE - закончить в своб время.
+Прикрутить к тестовому проекту (Саша). Для понимания и завершенности
+
+4. JUnit
+http://javastudy.ru/junit/junit-hello-world/
+
+5. Статьи на хабре про
+- Spring MVC
+https://www.google.com/search?client=ubuntu&channel=fs&q=habr+spring+mvc+&ie=utf-8&oe=utf-8
+- HIBERNATE
+https://habr.com/post/255829/
+--------------
+
+
+--------------
+18.10.18
+--------------
+1. Multiservice. Разобраться, как устроен
+	- исправить ошибки автотестов
+--------------
+
+
+
+
+03.10.2018
+
+1. Разобраться в проекте VirtualCardsExport
+Java. Выгрузки на серверах и отправка по smtp
+	- разобраться в самом последнем(свежем) проекте "VirtualCardsExport"
+	- выгрузить в IDEA с GIT
+		https://git.privatbank.ua/drp/RenewalCardsExporter (есть в IDEA)
+		https://git.privatbank.ua/drp_pegasusmaven/PersonalCardsExporter - выгрузка по выпуску персональных карт.
+		https://git.privatbank.ua/drp_pegasusmaven/KMVCardsExporter - выгрузка по перевыпуску КМВ карт.
+	- разобраться в проекте, цель - уметь работать с ним в отсутствие Саши
+
+Получить доступы:
+1. Power stone - сервер хранения настроек для приложений. Благодаря нему легко устанавливать новые апп на новые сервера, они автоматом подтягивают настройки из PS.
+	К Паше, чат есть, легко даст доступ по ssh. >>> КАК ДОСТУПЫ БУДУТ МОЖНО С САШЕЙ ПРОБОВАТЬ ЗАПУСТИТЬ ПЕРВОЕ ПРИЛОЖЕНИЕ ПО ВЫГРУЗКАМ, получить "вводную" по первому проекту (который разберем)
+	Проверить, чтобы при соединении сертификаты подходили (успешность соединения, одним словом)
+2. Сервера боевой и тестовый(master).
+	боевой - только по http, смотреть логи (Саша) 10:18
+	тестовый - через СЗ получить SSH доступ, полигон (Саша, док в лс Skype) 10:18
+
+=-=-=-=-=-=-=-
+
+
+
+
+
+
+
+=-=-=-=-=-=-=-
+Выгрузки карт. Загрузка JAR на сервер ч-з SCP (странно, чего не Jenkins или git напрямую)
+=-=-=-=-=-=-=-
+
+VirtualCardsExport. Загружаем на сервер jar и конфиг:
+On >>
+scp /home/nnm/IdeaProjects/VirtualCardsExporter/target/VirtualCardsExporter.jar sybase@10.56.0.175:/opt/src/regulation/download/VirtualCardsExportIgorTest/
+scp /home/nnm/IdeaProjects/VirtualCardsExporter/services.conf sybase@10.56.0.175:/opt/src/regulation/download/VirtualCardsExportIgorTest/conf
+
+С тестового копируем файл:
+On <<
+scp sybase@10.56.0.175:/opt/TC_MLS_1/conf/application.conf /tmp/Multiservice_test/
+
+SCP Man:
+http://webhelpcenter.ru/linux_commands/10-udalennoe-kopirovanie-fajlov-s-pomoshhyu-scp.html
+=-=-=-=-=-=-=-
+
+
+
+
+=-=-=-=-=-=-=-
+Статический IP
+
+IP: 10.1.158.176
+Маска подсети IPv4: 255.255.252.0
+Шлюз по умолчанию IPv4: 10.1.156.1
+DNS-серверы IPv4: 10.1.100.70, 10.62.128.100, 10.1.99.250, 10.62.128.101
+=-=-=-=-=-=-=-
+
+
+
+=-=-=-=-=-=-=-
+Tomcat установка через репозиторий Ubuntu:
+=-=-=-=-=-=-=-
+sudo apt install tomcat8
+
+webapp
+var lib
+
+configs
+/etc/tomcat8
+
+Catalina
+/usr/share/tomcat8
+=-=-=-=-=-=-=-
+
+Попытка 1. Переносим все конфиги и sh скрипты с Полигона:
+-- Начат процесс запуска юнита tomcat8.service.
+Окт 05 17:06:10 On tomcat8[30436]:  * Starting Tomcat servlet engine tomcat8
+Окт 05 17:06:12 On ntpd[1411]: Soliciting pool server 193.27.209.211
+Окт 05 17:06:15 On tomcat8[30436]:    ...fail!
+Окт 05 17:06:15 On systemd[1]: tomcat8.service: Control process exited, code=exited status=1
+Окт 05 17:06:15 On systemd[1]: Failed to start LSB: Start Tomcat..
+-- Subject: Ошибка юнита tomcat8.service
+-- Defined-By: systemd
+-- Support: http://lists.freedesktop.org/mailman/listinfo/systemd-devel
+-- 
+-- Произошел сбой юнита tomcat8.service.
+-- 
+-- Результат: failed.
+Окт 05 17:06:15 On systemd[1]: tomcat8.service: Unit entered failed state.
+Окт 05 17:06:15 On systemd[1]: tomcat8.service: Failed with result 'exit-code'.
+Окт 05 17:06:15 On sudo[30433]: pam_unix(sudo:session): session closed for user root
+
+
+Попытка 2. Переносим все конфиги и sh скрипты с Полигона:
+java-1.8.0-openjdk-amd64       1081       /usr/lib/jvm/java-1.8.0-openjdk-amd64
