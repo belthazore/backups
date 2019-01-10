@@ -1,4 +1,5 @@
-## Settings Backup installer
+
+# Settings Backup installer
 
 Бэкап настроек системы.
 Не доработано создание бэкапа текущих настроек (этап распаковки).
@@ -20,3 +21,7 @@ rm -rf backup_test
 
 - scripts.7z -> Скрипты создания и распаковки бэкапа
 - pack.7z -> бэкап файлов
+
+## Alias  
+
+alias backupDo='cd ~/backup/container && ./pack.sh && cd ~'
