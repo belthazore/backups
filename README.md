@@ -24,4 +24,6 @@ rm -rf backup_test
 
 ## Alias  
 
+```
 alias backupDo='cd ~/backup/container && ./pack.sh && cd ~'
+```
